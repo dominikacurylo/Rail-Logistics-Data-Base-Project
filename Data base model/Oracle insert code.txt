@@ -1,8 +1,8 @@
-INSERT INTO Owner (Name, ShortName, VATnumber)
-VALUES ('Infraestruturas de Portugal, SA', 'IP',  'PT503933813');
+INSERT INTO Owner (VATnumber, Name, ShortName)
+VALUES ('PT503933813','Infraestruturas de Portugal, SA', 'IP');
 -----------------
-INSERT INTO Operator (Name, ShortName, VATNumber)
-VALUES ('Medway - Operador Ferroviário de Mercadorias, S.A', 'Medway',  'PT509017800');
+INSERT INTO Operator (VATnumber, Name, ShortName)
+VALUES ('PT509017800','Medway - Operador Ferroviário de Mercadorias, S.A', 'Medway');
 -----------------
 INSERT INTO FacilityType (Name)
 VALUES ('Station');
