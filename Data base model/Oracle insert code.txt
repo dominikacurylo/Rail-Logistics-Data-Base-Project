@@ -1,318 +1,322 @@
 INSERT INTO Owner (VATnumber, Name, ShortName)
-VALUES ('PT503933813','Infraestruturas de Portugal, SA', 'IP');
------------------
-INSERT INTO Operator (VATnumber, Name, ShortName)
-VALUES ('PT509017800','Medway - Operador Ferroviário de Mercadorias, S.A', 'Medway');
------------------
+VALUES ('PT503933813', 'Infraestruturas de Portugal, SA', 'IP');
+
+
+
+INSERT INTO Operator (VATNumber, Name, ShortName)
+VALUES ('PT509017800', 'Medway - Operador Ferroviário de Mercadorias, S.A', 'Medway');
+
+
+
 INSERT INTO FacilityType (Name)
 VALUES ('Station');
------------------
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'São Romão', 1, NULL, NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Tamel', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Senhora das Dores', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Lousado', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Gauge(Name, Gauge)
+VALUES ('Standard', 1435);
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Porto Campanhã', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Gauge(Name, Gauge)
+VALUES ('Iberian', 1668);
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Leandro', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Porto São Bento', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Barcelos', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portuga, SAl');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'São Romão', 1, NULL, NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Vila Nova da Cerveira', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Tamel', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Midões', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Senhora das Dores', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Valença', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Lousado', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Darque', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Porto Campanhã', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Leandro', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Porto São Bento', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Contumil', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Barcelos', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Ermesinde', 1, NULL, NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Vila Nova da Cerveira', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'São Frutuoso', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Midões', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'São Pedro da Torre', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Valença', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ('Viana do Castelo', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Darque', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ('Famalicão', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Barroselas', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Nine', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Contumil', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Caminha', 1, NULL, NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Ermesinde', 1, NULL, NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Carvalha', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'São Frutuoso', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
-INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, Owner)
-VALUES ( 'Carreço', 1, NULL,NULL, NULL, 'Yes', 'Infraestruturas de Portugal, SA');
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'São Pedro da Torre', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ('Viana do Castelo', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ('Famalicão', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Barroselas', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Nine', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Caminha', 1, NULL, NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility ( Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Carvalha', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
+INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerVAT)
+VALUES ( 'Carreço', 1, NULL,NULL, NULL, 'Yes', 'PT503933813');
 
 
 
+INSERT INTO Line (Name, OwnerVAT, StartID, EndID, GaugeName)
+VALUES ('Ramal São Bento - Campanhã', 'PT503933813', 7,5,'Iberian');
 
+INSERT INTO Line (Name, OwnerVAT, StartID, EndID, GaugeName)
+VALUES ('Ramal Camapanhã - Nine', 'PT503933813', 5, 20,'Iberian');
 
+INSERT INTO Line ( Name, OwnerVAT, StartID, EndID, GaugeName)
+VALUES ( 'Ramal Nine - Barcelos', 'PT503933813',20,8,'Iberian');
 
+INSERT INTO Line ( Name, OwnerVAT, StartID, EndID, GaugeName)
+VALUES ('Ramal Barcelos - Viana', 'PT503933813', 8, 17,'Iberian');
 
+INSERT INTO Line (Name, OwnerVAT, StartID, EndID, GaugeName)
+VALUES ( 'Ramal viana - Caminha', 'PT503933813', 17, 21,'Iberian');
 
--------------------------
-INSERT INTO Line (Name, Owner, StartID, EndID, Gauge)
-VALUES ('Ramal São Bento - Campanhã', 'Infraestruturas de Portugal, SA', 7,5,1668);
+INSERT INTO Line ( Name, OwnerVAT, StartID, EndID, GaugeName)
+VALUES ( 'Ramal Caminha - Torre', 'PT503933813', 21, 16,'Iberian');
 
-INSERT INTO Line (Name, Owner, StartID, EndID, Gauge)
-VALUES ('Ramal Camapanhã - Nine', 'Infraestruturas de Portugal, SA', 5, 20, 1668);
+INSERT INTO Line ( Name, OwnerVAT, StartID, EndID, GaugeName)
+VALUES ( 'Ramal Torre - Valença', 'PT503933813', 16, 11,'Iberian');
 
-INSERT INTO Line ( Name, Owner, StartID, EndID, Gauge)
-VALUES ( 'Ramal Nine - Barcelos', 'Infraestruturas de Portugal, SA',20,8,1668);
 
-INSERT INTO Line ( Name, Owner, StartID, EndID, Gauge)
-VALUES ('Ramal Barcelos - Viana', 'Infraestruturas de Portugal, SA', 8, 17, 1668);
 
-INSERT INTO Line (Name, Owner, StartID, EndID, Gauge)
-VALUES ( 'Ramal viana - Caminha', 'Infraestruturas de Portugal, SA', 17, 21, 1668);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (1, 1, 1, 'Yes', 8000, 2618, 4, NULL);
 
-INSERT INTO Line ( Name, Owner, StartID, EndID, Gauge)
-VALUES ( 'Ramal Caminha - Torre', 'Infraestruturas de Portugal, SA', 21, 16, 1668);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (10, 2, 1, 'Yes', 8000, 29003, 2, NULL);
 
-INSERT INTO Line ( Name, Owner, StartID, EndID, Gauge)
-VALUES ( 'Ramal Torre - Valença', 'Infraestruturas de Portugal, SA', 16, 11, 1668);
---------------
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (1, 1, 'Yes', 8000, 2618, 4, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (11, 2, 2, 'Yes', 8000, 10000, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (2, 1, 'Yes', 8000, 29003, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (15, 3, 1, 'Yes', 8000, 5286, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (2, 2, 'Yes', 8000, 10000, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (16, 3, 2, 'Yes', 8000, 6000, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (3, 1, 'Yes', 8000, 5286, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (14, 4, 1, 'Yes', 8000, 10387, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (3, 2, 'Yes', 8000, 6000, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (12, 4, 2, 'Yes', 8000, 12000, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (4, 1, 'Yes', 8000, 10387, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (13, 4, 3, 'Yes', 6400, 8000, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (4, 2, 'Yes', 8000, 12000, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (20, 5, 1, 'Yes', 8000, 6000, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (4, 3, 'Yes', 6400, 8000, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (21, 5, 2, 'Yes', 8000, 3000, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (5, 1, 'Yes', 8000, 6000, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (22, 5, 3, 'Yes', 8000, 15000, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (5, 2, 'Yes', 8000, 3000, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (25, 6, 1, 'Yes', 8000, 20829, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (5, 3, 'Yes', 8000, 15000, 2, NULL);
+INSERT INTO Segment (ID, LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+VALUES (26, 7, 1, 'Yes', 8000, 4264, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (6, 1, 'Yes', 8000, 20829, 2, NULL);
 
-INSERT INTO Segment (LineID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
-VALUES (7, 1, 'Yes', 8000, 4264, 2, NULL);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---------------------
 INSERT INTO WagonType (Name) VALUES ( 'Cereal wagon');
+
 INSERT INTO WagonType (Name) VALUES ( 'Cereal wagon');
+
 INSERT INTO WagonType (Name) VALUES ( 'Covered wagon with sliding door');
+
 INSERT INTO WagonType ( Name) VALUES ( 'Container wagon (max 40'' HC)');
+
 INSERT INTO WagonType (Name) VALUES ( 'Container wagon (max 40'' HC)');
+
 INSERT INTO WagonType (Name) VALUES ( 'Container wagon (max 40'' HC)');
+
 INSERT INTO WagonType ( Name) VALUES ( 'Container wagon (max 40'' HC)');
---------------------
-INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, Gauge)
-VALUES (1245, 'Tadgs 32 94 082 3', 'Metalsines', 2, 'Duplo', 17240, 3072, 4270, 24, 120, 56, 75, 1, 1668);
-
-INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, Gauge)
-VALUES (1278, 'Tdgs 41 94 074 1', 'Equimetal', 2, 'Duplo', 9640, 3120, 4165.5, 13.8, 100, 26.2, 38, 1, 1668);
-
-INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, Gauge)
-VALUES (1325, 'Gabs 81 94 181 1', 'Sepsa Cometna', 2, 'Duplo', 21700, 3180, 4170, 29.8, 100, 50.2, 110, 2, 1668);
-
-INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, Gauge)
-VALUES (1104, 'Regmms 32 94 356 3', 'Metalsines', 2, 'Duplo', 14040, 3104, 2535, 21.2, 120, 60.6, 76.3, 3, 1668);
-
-INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, Gauge)
-VALUES (985, 'Lgs 22 94 441 6', 'Metalsines', 1, 'Simples', 13860, 2850, 1060, 11.9, 120, 28.1, 76.3, 3, 1668);
-
-INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, Gauge)
-VALUES (987, 'Sgnss 12 94 455 2', 'Emef', 2, 'Duplo', 18116, 2950, 1030, 21.6, 120, 68.4, 76.3, 3, 1668);
-
-INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, Gauge)
-VALUES (988, 'Sgnss 12 94 455 2', 'Emef', 2, 'Duplo', 18116, 2950, 1030, 21.6, 120, 68.4, 76.3, 3, 1435);
-—---------------
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 077', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 078', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 079', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 080', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 081', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 082', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 083', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 084', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 085', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 086', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 087', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 088', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 089', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 090', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('356 3 091', 1104, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1987);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('082 3 045', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1990);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('082 3 046', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1990);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('082 3 047', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1990);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('082 3 048', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1990);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('082 3 049', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1990);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('074 1 001', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('074 1 002', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('074 1 003', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('074 1 004', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('074 1 005', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('074 1 006', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('074 1 007', 1278, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('181 1 011', 1325, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('181 1 012', 1325, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('181 1 013', 1325, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
-
-INSERT INTO Wagon (Number, ModelID, Operator, ServiceYear) VALUES ('181 1 014', 1325, 'Medway - Operador Ferroviário de Mercadorias, S.A', 1977);
 
 
 
+INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, GaugeName)
+VALUES (1245, 'Tadgs 32 94 082 3', 'Metalsines', 2, 'Duplo', 17240, 3072, 4270, 24, 120, 56, 75, 1,'Iberian');
+
+INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, GaugeName)
+VALUES (1278, 'Tdgs 41 94 074 1', 'Equimetal', 2, 'Duplo', 9640, 3120, 4165.5, 13.8, 100, 26.2, 38, 1, 'Iberian');
+
+INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, GaugeName)
+VALUES (1325, 'Gabs 81 94 181 1', 'Sepsa Cometna', 2, 'Duplo', 21700, 3180, 4170, 29.8, 100, 50.2, 110, 2, 'Iberian' );
+
+INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, GaugeName)
+VALUES (1104, 'Regmms 32 94 356 3', 'Metalsines', 2, 'Duplo', 14040, 3104, 2535, 21.2, 120, 60.6, 76.3, 3,'Iberian');
+
+INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, GaugeName)
+VALUES (985, 'Lgs 22 94 441 6', 'Metalsines', 1, 'Simples', 13860, 2850, 1060, 11.9, 120, 28.1, 76.3, 3,'Iberian');
+
+INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, GaugeName)
+VALUES (987, 'Sgnss 12 94 455 2', 'Emef', 2, 'Duplo', 18116, 2950, 1030, 21.6, 120, 68.4, 76.3, 3,'Iberian');
+
+INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID, GaugeName)
+VALUES (988, 'Sgnss 12 94 455 2', 'Emef', 2, 'Duplo', 18116, 2950, 1030, 21.6, 120, 68.4, 76.3, 3,'Standard');
 
 
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 077', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 078', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 079', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 080', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 081', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 082', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 083', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 084', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 085', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 086', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 087', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 088', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 089', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 090', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('356 3 091', 1104, 'PT509017800', 1987);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('082 3 045', 1278, 'PT509017800', 1990);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('082 3 046', 1278, 'PT509017800', 1990);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('082 3 047', 1278, 'PT509017800', 1990);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('082 3 048', 1278, 'PT509017800', 1990);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('082 3 049', 1278, 'PT509017800', 1990);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('074 1 001', 1278, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('074 1 002', 1278, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('074 1 003', 1278, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('074 1 004', 1278, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('074 1 005', 1278, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('074 1 006', 1278, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('074 1 007', 1278, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('181 1 011', 1325, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('181 1 012', 1325, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('181 1 013', 1325, 'PT509017800', 1977);
+
+INSERT INTO Wagon (WagonNumber, ModelID, OperatorVAT, ServiceYear) VALUES ('181 1 014', 1325, 'PT509017800', 1977);
 
 
 
 -- Typy elektryczne (Electric_locomotive)
-INSERT INTO Electric_locomotive (ElectricTypeID, Voltage, Frequency)
-VALUES (1, 25000, 50);
+INSERT INTO Electric_locomotive (Voltage, Frequency)
+VALUES (25000, 50);
 
-INSERT INTO Electric_locomotive (ElectricTypeID, Voltage, Frequency)
-VALUES (2, 25000, 50);
+INSERT INTO Electric_locomotive (Voltage, Frequency)
+VALUES (25000, 50);
+
+INSERT INTO Electric_locomotive (Voltage, Frequency)
+VALUES (25000, 50);
+
+
 
 -- Typy spalinowe (Diesel_locomotive)
-INSERT INTO Diesel_locomotive (ElectricTypeID, Voltage, Frequency)
-VALUES (3, 25000, 50);
+INSERT INTO Diesel_locomotive (Fuel_capacity)
+VALUES (4882);
 
-INSERT INTO Diesel_locomotive (DieselTypeID, Fuel_capacity)
-VALUES (1, 4882);
----------------------------------
+
 -- Modele elektryczne
-INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselType, ElectricType, Gauge)
-VALUES ('Siemens', 'Eurosprinter', 2, 'Bo-Bo', 5600, 19.2, 3, 4.375, 87, 220, 70, 300, NULL, 'Electric', 1668);
+INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselTypeID, ElectricTypeID, GaugeName)
+VALUES ('Siemens', 'Eurosprinter', 2, 'Bo-Bo', 5600, 19.2, 3, 4.375, 87, 220, 70, 300, NULL, 1,'Iberian');
 
-INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselType, ElectricType, Gauge)
-VALUES ( 'Siemens', 'Eurosprinter', 2, 'Bo-Bo', 5600, 19.2, 3, 4.375, 87, 220, 70, 300, NULL, 'Electric', 1668);
+INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselTypeID, ElectricTypeID, GaugeName)
+VALUES ( 'Siemens', 'Eurosprinter', 2, 'Bo-Bo', 5600, 19.2, 3, 4.375, 87, 220, 70, 300, NULL, 2,'Iberian');
 
-INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselType, ElectricType, Gauge)
-VALUES ('Siemens', 'Eurosprinter', 2, 'Bo-Bo', 5600, 19.2, 3, 4.375, 87, 220, 70, 300, 'Electric', NULL, 1668);
+INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselTypeID, ElectricTypeID, GaugeName)
+VALUES ('Siemens', 'Eurosprinter', 2, 'Bo-Bo', 5600, 19.2, 3, 4.375, 87, 220, 70, 300, NULL, 3,'Iberian');
 
 -- Model spalinowy
-INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselType, ElectricType, Gauge)
-VALUES ( 'Sorefame - Alsthom', 'CP 1900', 2, 'Co-Co', 1623, 19.084, 3.062, 4.31, 117, 100, 42.5, 396, 'Diesel', NULL, 1668);
-----------------------------
-INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, Operator)
-VALUES (5621, 'Inês', 1, 1995, 'Medway - Operador Ferroviário de Mercadorias, S.A');
+INSERT INTO LocomotiveModel (Make, Model, NumberBogies, Bogies, Power, Length, Width, Height, Weight, MaxSpeed, OperationalSpeed, Traction, DieselTypeID, ElectricTypeID, GaugeName)
+VALUES ( 'Sorefame - Alsthom', 'CP 1900', 2, 'Co-Co', 1623, 19.084, 3.062, 4.31, 117, 100, 42.5, 396, 1, NULL,'Iberian');
 
-INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, Operator)
-VALUES (5602, 'Paz', 2, 1995, 'Medway - Operador Ferroviário de Mercadorias, S.A' );
 
-INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, Operator)
-VALUES (5630, 'Helena', 3,1996, 'Medway - Operador Ferroviário de Mercadorias, S.A');
 
-INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, Operator)
-VALUES (1903, 'Eva', 4, 1981, 'Medway - Operador Ferroviário de Mercadorias, S.A');
-----------------------------
+INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, OperatorVAT)
+VALUES (5621, 'Inês', 1, 1995, 'PT509017800');
+
+INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, OperatorVAT)
+VALUES (5623, 'Paz', 2, 1995, 'PT509017800');
+
+INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, OperatorVAT)
+VALUES (5630, 'Helena', 3,1996, 'PT509017800');
+
+INSERT INTO Locomotive (LocomotiveNumber, Name, ModelID, Service, OperatorVAT)
+VALUES (1903, 'Eva', 4, 1981, 'PT509017800');
+
 COMMIT;
+
+
+
+
+
+
+
+
+
+
+
 
 

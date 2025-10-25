@@ -1,0 +1,68 @@
+-------------------------------------USBD8---------------------------------
+SELECT 
+    loc.LocomotiveNumber AS "Number",
+    loc.Name AS Locomotive,
+    lm.Make,
+    lm.Model,
+    lm.Power,
+    CASE 
+        WHEN lm.DieselTypeID IS NOT NULL THEN 'Diesel'
+        WHEN lm.ElectricTypeID IS NOT NULL THEN 'Electric'
+    END AS "Type",
+    op.Name AS Operator
+FROM Locomotive loc
+JOIN LocomotiveModel lm ON loc.ModelID = lm.ID
+JOIN Operator op ON loc.OperatorVAT = op.VATNumber
+WHERE 
+    :type IS NOT NULL
+    AND (
+        (:type = 'Diesel'  AND lm.DieselTypeID IS NOT NULL)
+        OR
+        (:type = 'Electric' AND lm.ElectricTypeID IS NOT NULL)
+    )
+ORDER BY loc.Name;
+
+----------------------------------USBD13---------------------------------
+SELECT 
+    loc.LocomotiveNumber AS "Number",
+    loc.Name AS Locomotive,
+    lm.Make,
+    lm.Model,
+    g.Name AS Gauge,
+    CASE 
+        WHEN lm.DieselTypeID IS NOT NULL THEN 'Diesel'
+        WHEN lm.ElectricTypeID IS NOT NULL THEN 'Electric'
+    END AS "Type",
+    op.Name AS Operator
+FROM Locomotive loc
+JOIN LocomotiveModel lm ON loc.ModelID = lm.ID
+JOIN Operator op ON loc.OperatorVAT = op.VATNumber
+JOIN Gauge g ON lm.GaugeName = g.Name
+WHERE 
+    (UPPER(op.ShortName) = UPPER(:operator) 
+     OR UPPER(op.Name) = UPPER(:operator))
+    AND (
+        UPPER(g.Name) = UPPER(:gauge)
+        OR TO_CHAR(g.Gauge) = :gauge
+    )
+    AND (
+         (:type = 'Diesel'  AND lm.DieselTypeID IS NOT NULL)
+      OR (:type = 'Electric' AND lm.ElectricTypeID IS NOT NULL)
+    )
+ORDER BY loc.Name;
+
+---------------------------------USBD19--------------------------------
+SELECT 
+    ow.Name AS Owner,
+    s.NumberOfTracks AS "Number of tracks",
+    COUNT(s.ID) AS "Number of segments"
+FROM Segment s
+JOIN Line l ON s.LineID = l.ID
+JOIN Owner ow ON l.OwnerVAT = ow.VATNumber
+WHERE 
+    (UPPER(ow.ShortName) = UPPER(:owner_input) 
+     OR UPPER(ow.Name) = UPPER(:owner_input))
+GROUP BY ow.Name, s.NumberOfTracks
+ORDER BY s.NumberOfTracks;
+
+----------------------------------------------------------------------
