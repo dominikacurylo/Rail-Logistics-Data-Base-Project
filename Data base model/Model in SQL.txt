@@ -48,7 +48,6 @@ CREATE TABLE Line (
   EndID          number(38) NOT NULL, 
   OwnerShortName varchar2(50) NOT NULL, 
   GaugeName      varchar2(100) NOT NULL, 
-  TrainID        number(38) NOT NULL, 
   PRIMARY KEY (ID));
 CREATE TABLE Line_Segment (
   LineID    number(38) NOT NULL, 
@@ -190,6 +189,7 @@ ALTER TABLE Freight ADD CONSTRAINT FKFreight209104 FOREIGN KEY (StartID) REFEREN
 ALTER TABLE Freight ADD CONSTRAINT FKFreight840564 FOREIGN KEY (EndID) REFERENCES Facility (ID);
 ALTER TABLE Train_Line ADD CONSTRAINT FKTrain_Line692700 FOREIGN KEY (TrainID) REFERENCES Train (ID);
 ALTER TABLE Train_Line ADD CONSTRAINT FKTrain_Line254418 FOREIGN KEY (LineID) REFERENCES Line (ID);
+
 
 
 
