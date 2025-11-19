@@ -181,27 +181,28 @@ INSERT INTO Line_Segment (LineID, SegmentID)
 VALUES (4, 1);  
 
 
-INSERT INTO Train (LineID)
-VALUES (1); 
+INSERT INTO Train DEFAULT VALUES;
+INSERT INTO Train DEFAULT VALUES;
+INSERT INTO Train DEFAULT VALUES;
+INSERT INTO Train DEFAULT VALUES;
+INSERT INTO Train DEFAULT VALUES;
+INSERT INTO Train DEFAULT VALUES;
+INSERT INTO Train DEFAULT VALUES;
 
-INSERT INTO Train (LineID)
-VALUES (2); 
 
-INSERT INTO Train (LineID)
-VALUES (3);
 
-INSERT INTO Train (LineID)
-VALUES (4);
 
-INSERT INTO Train (LineID)
-VALUES (5); 
+INSERT INTO Train_Line (TrainID, LineID, ArrivalTime, DepartureTime)
+VALUES (1, 1, NULL, NULL);
 
-INSERT INTO Train (LineID)
-VALUES (6); 
+INSERT INTO Train_Line (TrainID, LineID, ArrivalTime, DepartureTime)
+VALUES (2, 2, NULL, NULL);
 
-INSERT INTO Train (LineID)
-VALUES (7);
+INSERT INTO Train_Line (TrainID, LineID, ArrivalTime, DepartureTime)
+VALUES (3, 3, NULL, NULL);
 
+INSERT INTO Train_Line (TrainID, LineID, ArrivalTime, DepartureTime)
+VALUES (4, 4, NULL, NULL);
 
 
 
