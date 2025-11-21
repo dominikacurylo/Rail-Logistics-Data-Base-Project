@@ -1,0 +1,17 @@
+SELECT
+    t.ID AS TrainID,
+    l.Name AS "Line Name", 
+    s.ID AS "Segment ID", 
+    s."Order" AS "Segment Order", 
+    s.Length
+FROM Train t
+JOIN Train_Line tl
+    ON t.ID = tl.TrainID
+JOIN Line l
+    ON tl.LineID = l.ID
+JOIN Line_Segment ls
+    ON l.ID = ls.LineID
+JOIN Segment s
+    ON ls.SegmentID = s.ID
+WHERE t.ID = :TrainID
+ORDER BY s."Order";
