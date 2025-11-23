@@ -1,0 +1,18 @@
+SELECT 
+    L.LocomotiveNumber AS "Locomotive Number", 
+    L.Name AS "Name", 
+    L.OperatorShortName AS "Operator", 
+    LISTAGG(LG.GaugeName, ', ') WITHIN GROUP (ORDER BY LG.GaugeName) AS Gauges
+FROM 
+    Locomotive L
+JOIN 
+    LocomotiveModel_Gauge LG ON L.ModelID = LG.LocomotiveModelID
+JOIN 
+    Operator O ON L.OperatorShortName = O.ShortName
+WHERE 
+    UPPER(O.ShortName) = UPPER(:operator_name)
+    OR UPPER(O.Name) LIKE '%' || UPPER(:operator_name) || '%'
+GROUP BY 
+    L.LocomotiveNumber, L.Name, L.OperatorShortName
+HAVING 
+    COUNT(LG.GaugeName) > 1;

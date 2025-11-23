@@ -2,11 +2,8 @@ INSERT INTO Owner (ShortName, Name, VATnumber)
 VALUES ('IP', 'Infraestruturas de Portugal, SA', 'PT503933813');
 
 
-
-
 INSERT INTO Operator (ShortName, Name, VATNumber)
 VALUES ('Medway', 'Medway - Operador Ferroviário de Mercadorias, S.A', 'PT509017800');
-
 
 
 INSERT INTO FacilityType (Name, Number_of_grain_silos, Number_of_warehouses)
@@ -37,13 +34,11 @@ INSERT INTO FacilityType (Name, Number_of_grain_silos, Number_of_warehouses)
 VALUES ('Warehouse Facility', 0, 6);
 
 
-
 INSERT INTO Gauge(Name, Gauge)
 VALUES ('Standard', 1435);
 
 INSERT INTO Gauge(Name, Gauge)
 VALUES ('Iberian', 1668);
-
 
 
 INSERT INTO Facility (Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName)
@@ -118,6 +113,7 @@ VALUES ('Carreço', 9, NULL, NULL, NULL, 'Yes', 'IP');
 
 
 
+
 INSERT INTO Line (Name, OwnerShortName, StartID, EndID, GaugeName)
 VALUES ('Ramal São Bento - Campanhã', 'IP', 7,5,'Iberian');
 
@@ -138,6 +134,7 @@ VALUES ( 'Ramal Caminha - Torre', 'IP', 21, 16,'Iberian');
 
 INSERT INTO Line ( Name,OwnerShortName, StartID, EndID, GaugeName)
 VALUES ( 'Ramal Torre - Valença', 'IP', 16, 11,'Iberian');
+
 
 INSERT INTO Segment (ID,"Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
 VALUES (1, 1, 'Yes', 8000, 2618, 4, NULL);
@@ -201,13 +198,20 @@ INSERT INTO Line_Segment (LineID, SegmentID)
 VALUES (4, 1);  
 
 
-INSERT INTO Train DEFAULT VALUES;
-INSERT INTO Train DEFAULT VALUES;
-INSERT INTO Train DEFAULT VALUES;
-INSERT INTO Train DEFAULT VALUES;
-INSERT INTO Train DEFAULT VALUES;
-INSERT INTO Train DEFAULT VALUES;
-INSERT INTO Train DEFAULT VALUES;
+INSERT INTO Train(ID)
+VALUES (1);
+INSERT INTO Train(ID)
+VALUES (2);
+INSERT INTO Train(ID)
+VALUES (3);
+INSERT INTO Train(ID)
+VALUES (4);
+INSERT INTO Train(ID)
+VALUES (5);
+INSERT INTO Train(ID)
+VALUES (6);
+INSERT INTO Train(ID)
+VALUES (7);
 
 
 
@@ -295,15 +299,6 @@ VALUES (987, 'Sgnss 12 94 455 2', 'Emef', 2, 'Duplo', 18116, 2950, 1030, 21.6, 1
 
 INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID)
 VALUES (988, 'Sgnss 12 94 455 2', 'Emef', 2, 'Duplo', 18116, 2950, 1030, 21.6, 120, 68.4, 76.3, 3);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -483,9 +478,11 @@ VALUES ( 'Sorefame - Alsthom', 'CP 1900', 2, 'Co-Co', 1623, 19.084, 3.062, 4.31,
 
 
 
-
 INSERT INTO LocomotiveModel_Gauge (LocomotiveModelID, GaugeName)
 VALUES (1, 'Iberian');
+
+INSERT INTO LocomotiveModel_Gauge (LocomotiveModelID, GaugeName)
+VALUES (1, 'Standard');
 
 INSERT INTO LocomotiveModel_Gauge (LocomotiveModelID, GaugeName)
 VALUES (2, 'Iberian');
@@ -494,8 +491,13 @@ INSERT INTO LocomotiveModel_Gauge (LocomotiveModelID, GaugeName)
 VALUES (3, 'Iberian');
 
 INSERT INTO LocomotiveModel_Gauge (LocomotiveModelID, GaugeName)
+VALUES (3, 'Standard');
+
+INSERT INTO LocomotiveModel_Gauge (LocomotiveModelID, GaugeName)
 VALUES (4, 'Iberian');
 
+INSERT INTO LocomotiveModel_Gauge (LocomotiveModelID, GaugeName)
+VALUES (4, 'Standard');
 
 
 
