@@ -1,0 +1,116 @@
+USBD23
+------------------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION get_train_route_details(p_train_id IN NUMBER)
+RETURN SYS_REFCURSOR
+IS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT
+            t.ID AS TrainID,
+            l.Name AS "Line Name", 
+            s.ID AS "Segment ID", 
+            s."Order" AS "Segment Order", 
+            s.Length
+        FROM Train t
+        JOIN Train_Line tl 
+            ON t.ID = tl.TrainID
+        JOIN Line l 
+            ON tl.LineID = l.ID
+        JOIN Line_Segment ls 
+            ON l.ID = ls.LineID
+        JOIN Segment s 
+            ON ls.SegmentID = s.ID
+        WHERE t.ID = p_train_id
+        ORDER BY s."Order";
+
+    RETURN v_cursor;
+END;
+/
+--------------
+Recalling ex.: 
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    v_cursor := get_train_route_details(1); 
+    DBMS_SQL.RETURN_RESULT(v_cursor);
+END;
+/
+---------------
+
+USBD28
+--------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION get_multigauge_locomotives(p_operator_name IN VARCHAR2)
+RETURN SYS_REFCURSOR 
+IS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT 
+            L.LocomotiveNumber AS "Locomotive Number", 
+            L.Name AS "Name", 
+            L.OperatorShortName AS "Operator", 
+            LISTAGG(LG.GaugeName, ', ') WITHIN GROUP (ORDER BY LG.GaugeName) AS Gauges
+        FROM 
+            Locomotive L
+        JOIN 
+            LocomotiveModel_Gauge LG ON L.ModelID = LG.LocomotiveModelID
+        JOIN 
+            Operator O ON L.OperatorShortName = O.ShortName
+        WHERE 
+            UPPER(O.ShortName) = UPPER(p_operator_name)
+            OR UPPER(O.Name) LIKE '%' || UPPER(p_operator_name) || '%'
+        GROUP BY 
+            L.LocomotiveNumber, L.Name, L.OperatorShortName
+        HAVING 
+            COUNT(LG.GaugeName) > 1;
+
+    RETURN v_cursor;
+END;
+/
+--------------------------
+Recalling ex.:
+
+DECLARE
+v_cursor SYS_REFCURSOR;
+BEGIN
+v_cursor := get_multigauge_locomotives('Medway');
+DBMS_SQL.RETURN_RESULT(v_cursor);
+END;
+/
+--------------------------
+USBD30
+-------------------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION get_silo_facilities
+RETURN SYS_REFCURSOR
+IS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    OPEN v_cursor FOR
+        SELECT
+            f.ID,
+            f.NAME as "FACILITY NAME",
+            ft.NAME as "FACILITY TYPE NAME",
+            ft.NUMBER_OF_GRAIN_SILOS as "NUMBER OF GRAIN SILOS",
+            ft.NUMBER_OF_WAREHOUSES as "NUMBER OF WAREHOUSES"
+        FROM FACILITY f
+        JOIN FACILITYTYPE ft
+            ON f.TYPEID = ft.FACILITYTYPEID
+        WHERE ft.NUMBER_OF_GRAIN_SILOS >= 1
+          AND (ft.NUMBER_OF_WAREHOUSES = 0 OR ft.NUMBER_OF_WAREHOUSES IS NULL);
+
+    RETURN v_cursor;
+END;
+/
+---------------------
+Recalling ex.:
+
+DECLARE
+v_cursor SYS_REFCURSOR;
+BEGIN
+v_cursor := get_silo_facilities();
+DBMS_SQL.RETURN_RESULT(v_cursor);
+END;
+/
+---------------------
