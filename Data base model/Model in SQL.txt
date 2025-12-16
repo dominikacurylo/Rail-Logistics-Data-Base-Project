@@ -1,37 +1,58 @@
+CREATE TABLE ActualRoute (
+  TrainID       number(38) NOT NULL, 
+  LineID        number(38) NOT NULL, 
+  Directoion    varchar2(100) NOT NULL, 
+  DepartureTime date NOT NULL, 
+  ArrivalTime   date, 
+  PRIMARY KEY (TrainID, 
+  LineID)
+CONSTRAINT CK_ActualRoute_Time CHECK (ArrivalTime >= DepartureTime));
+CREATE TABLE BuildingType (
+  ID   number(10) NOT NULL, 
+  Type varchar2(100) NOT NULL, 
+  PRIMARY KEY (ID));
 CREATE TABLE Diesel_locomotive (
-  DieselTypeID  number(38) GENERATED AS IDENTITY, 
+  DieselTypeID  number(38) NOT NULL, 
   Fuel_capacity number(38) NOT NULL, 
   PRIMARY KEY (DieselTypeID));
 CREATE TABLE Electric_locomotive (
-  ElectricTypeID number(38) GENERATED AS IDENTITY, 
+  ElectricTypeID number(38) NOT NULL, 
   Voltage        number(10) NOT NULL, 
   Frequency      number(10) NOT NULL, 
   PRIMARY KEY (ElectricTypeID));
 CREATE TABLE Facility (
-  ID             number(38) GENERATED AS IDENTITY, 
+  ID             number(38) NOT NULL, 
   Name           varchar2(100) NOT NULL UNIQUE, 
   TypeID         number(38) NOT NULL, 
-  Address        varchar2(100) UNIQUE, 
-  City           varchar2(100), 
-  Capacity       number(10), 
-  Electrified    char(3), 
+  Address        varchar2(100) NOT NULL UNIQUE, 
+  City           varchar2(100) NOT NULL, 
+  Capacity       number(10) NOT NULL, 
+  Electrified    char(3) NOT NULL, 
   OwnerShortName varchar2(50) NOT NULL, 
   PRIMARY KEY (ID), 
   CONSTRAINT CK_Facility_Electrified 
     CHECK (Electrified IN ('Yes','No')));
+CREATE TABLE Facility_building (
+  BuildingTypeID number(10) NOT NULL, 
+  FacilityID     number(38) NOT NULL, 
+  Number         number(10) NOT NULL, 
+  PRIMARY KEY (BuildingTypeID, 
+  FacilityID));
 CREATE TABLE FacilityType (
-  FacilityTypeID        number(38) GENERATED AS IDENTITY, 
-  Name                  varchar2(100) NOT NULL, 
-  Number_of_grain_silos number(38), 
-  Number_of_warehouses  number(38), 
+  FacilityTypeID number(38) NOT NULL, 
+  Name           varchar2(100) NOT NULL, 
   PRIMARY KEY (FacilityTypeID));
 CREATE TABLE Freight (
-  ID      number(38) GENERATED AS IDENTITY, 
-  Freight number(10) NOT NULL, 
-  Weight  number(10), 
-  StartID number(38) NOT NULL, 
-  EndID   number(38) NOT NULL, 
+  ID       number(38) NOT NULL, 
+  Freight  number(10) NOT NULL, 
+  StartID  number(38) NOT NULL, 
+  EndID    number(38) NOT NULL, 
+  LoadTime date NOT NULL, 
   PRIMARY KEY (ID));
+CREATE TABLE FreightWagonUnload (
+  Wagon_FreightWagonWagonNumber varchar2(50) NOT NULL, 
+  Wagon_FreightFreightID        number(38) NOT NULL, 
+  UnloadTime                    date NOT NULL);
 CREATE TABLE Gauge (
   Name  varchar2(100) NOT NULL, 
   Gauge number(10) NOT NULL, 
@@ -42,7 +63,7 @@ CREATE TABLE Gauge_WagonModel (
   PRIMARY KEY (GaugeName, 
   WagonModelModelNumber));
 CREATE TABLE Line (
-  ID             number(38) GENERATED AS IDENTITY, 
+  ID             number(38) NOT NULL, 
   Name           varchar2(100) NOT NULL UNIQUE, 
   StartID        number(38) NOT NULL, 
   EndID          number(38) NOT NULL, 
@@ -67,7 +88,7 @@ CREATE TABLE Locomotive_Train (
   PRIMARY KEY (LocomotiveLocomotiveNumber, 
   TrainID));
 CREATE TABLE LocomotiveModel (
-  ID               number(38) GENERATED AS IDENTITY, 
+  ID               number(38) NOT NULL, 
   Make             varchar2(100) NOT NULL, 
   Model            varchar2(100) NOT NULL, 
   NumberBogies     number(10) NOT NULL, 
@@ -100,6 +121,15 @@ CREATE TABLE Owner (
   Name      varchar2(100) NOT NULL, 
   VATnumber varchar2(15) NOT NULL UNIQUE, 
   PRIMARY KEY (ShortName));
+CREATE TABLE PlannedRoute (
+  TrainID       number(38) NOT NULL, 
+  LineID        number(38) NOT NULL, 
+  Direction     varchar2(100) NOT NULL, 
+  ArrivalTime   date NOT NULL, 
+  "Order"       number(10) NOT NULL, 
+  DepartureTime date NOT NULL, 
+  PRIMARY KEY (TrainID, 
+  LineID));
 CREATE TABLE Segment (
   ID             number(38) NOT NULL, 
   "Order"        number(10) NOT NULL, 
@@ -107,25 +137,25 @@ CREATE TABLE Segment (
   Max_weight     float(38) NOT NULL, 
   Length         number(38) NOT NULL, 
   NumberOfTracks number(10) NOT NULL, 
-  SpeedLimit     number(10), 
+  SpeedLimit     number(10) NOT NULL, 
   PRIMARY KEY (ID), 
   CONSTRAINT CK_LineSegment_Electrified 
     CHECK (Electrified IN ('Yes','No')));
+CREATE TABLE Siding (
+  ID        number(10) NOT NULL, 
+  Position  number(10) NOT NULL, 
+  Length    number(10) NOT NULL, 
+  SegmentID number(38) NOT NULL, 
+  PRIMARY KEY (ID));
 CREATE TABLE Train (
-  ID number(38) NOT NULL, 
+  ID        number(38) NOT NULL, 
+  MaxLength number(10) NOT NULL, 
   PRIMARY KEY (ID));
 CREATE TABLE Train_Freight (
   TrainID   number(38) NOT NULL, 
   FreightID number(38) NOT NULL, 
   PRIMARY KEY (TrainID, 
   FreightID));
-CREATE TABLE Train_Line (
-  TrainID       number(38) NOT NULL, 
-  LineID        number(38) NOT NULL, 
-  ArrivalTime   date, 
-  DepartureTime date, 
-  PRIMARY KEY (TrainID, 
-  LineID));
 CREATE TABLE Wagon (
   WagonNumber       varchar2(50) NOT NULL, 
   ModelID           number(38) NOT NULL, 
@@ -135,6 +165,7 @@ CREATE TABLE Wagon (
 CREATE TABLE Wagon_Freight (
   WagonWagonNumber varchar2(50) NOT NULL, 
   FreightID        number(38) NOT NULL, 
+  Weight           number(10) NOT NULL, 
   PRIMARY KEY (WagonWagonNumber, 
   FreightID));
 CREATE TABLE WagonModel (
@@ -153,7 +184,7 @@ CREATE TABLE WagonModel (
   TypeID       number(38) NOT NULL, 
   PRIMARY KEY (ModelNumber));
 CREATE TABLE WagonType (
-  ID   number(38) GENERATED AS IDENTITY, 
+  ID   number(38) NOT NULL, 
   Name varchar2(100) NOT NULL, 
   PRIMARY KEY (ID));
 CREATE INDEX LocomotiveModel 
@@ -161,20 +192,20 @@ CREATE INDEX LocomotiveModel
 CREATE INDEX LocomotiveModel2 
   ON LocomotiveModel (ElectricTypeID);
 ALTER TABLE Facility ADD CONSTRAINT FK_Facility_FacilityType FOREIGN KEY (TypeID) REFERENCES FacilityType (FacilityTypeID);
+ALTER TABLE Facility ADD CONSTRAINT FK_Facility_Owner FOREIGN KEY (OwnerShortName) REFERENCES Owner (ShortName);
 ALTER TABLE WagonModel ADD CONSTRAINT FK_WagonModel_WagonType FOREIGN KEY (TypeID) REFERENCES WagonType (ID);
 ALTER TABLE Line ADD CONSTRAINT FK_Line_StartFacility FOREIGN KEY (StartID) REFERENCES Facility (ID);
 ALTER TABLE Line ADD CONSTRAINT FK_Line_EndFacility FOREIGN KEY (EndID) REFERENCES Facility (ID);
+ALTER TABLE Line ADD CONSTRAINT FK_Line_Owner FOREIGN KEY (OwnerShortName) REFERENCES Owner (ShortName);
+ALTER TABLE Line ADD CONSTRAINT FK_Line_Gauge FOREIGN KEY (GaugeName) REFERENCES Gauge (Name);
 ALTER TABLE LocomotiveModel ADD CONSTRAINT FK_LocomotiveModel_Electric FOREIGN KEY (ElectricTypeID) REFERENCES Electric_locomotive (ElectricTypeID);
 ALTER TABLE LocomotiveModel ADD CONSTRAINT FK_LocomotiveModel_Diesel FOREIGN KEY (DieselTypeID) REFERENCES Diesel_locomotive (DieselTypeID);
-ALTER TABLE Facility ADD CONSTRAINT FK_Facility_Owner FOREIGN KEY (OwnerShortName) REFERENCES Owner (ShortName);
 ALTER TABLE Locomotive ADD CONSTRAINT FK_Locomotive_LocomotiveModel FOREIGN KEY (ModelID) REFERENCES LocomotiveModel (ID);
+ALTER TABLE Locomotive ADD CONSTRAINT FK_Locomotive_Operator FOREIGN KEY (OperatorShortName) REFERENCES Operator (ShortName);
 ALTER TABLE Wagon ADD CONSTRAINT FK_Wagon_WagonModel FOREIGN KEY (ModelID) REFERENCES WagonModel (ModelNumber);
 ALTER TABLE Wagon ADD CONSTRAINT FK_Wagon_Operator FOREIGN KEY (OperatorShortName) REFERENCES Operator (ShortName);
-ALTER TABLE Locomotive ADD CONSTRAINT FK_Locomotive_Operator FOREIGN KEY (OperatorShortName) REFERENCES Operator (ShortName);
-ALTER TABLE Line ADD CONSTRAINT FK_Line_Owner FOREIGN KEY (OwnerShortName) REFERENCES Owner (ShortName);
 ALTER TABLE Line_Segment ADD CONSTRAINT FK_Line_Segment_Line FOREIGN KEY (LineID) REFERENCES Line (ID);
 ALTER TABLE Line_Segment ADD CONSTRAINT FK_Line_Segment_Segment FOREIGN KEY (SegmentID) REFERENCES Segment (ID);
-ALTER TABLE Line ADD CONSTRAINT FK_Line_Gauge FOREIGN KEY (GaugeName) REFERENCES Gauge (Name);
 ALTER TABLE Locomotive_Train ADD CONSTRAINT FK_Locomotive_Train_Locomotive FOREIGN KEY (LocomotiveLocomotiveNumber) REFERENCES Locomotive (LocomotiveNumber);
 ALTER TABLE Locomotive_Train ADD CONSTRAINT FK_Locomotive_Train_Train FOREIGN KEY (TrainID) REFERENCES Train (ID);
 ALTER TABLE LocomotiveModel_Gauge ADD CONSTRAINT FK_LM_Gauge_LocomotiveModel FOREIGN KEY (LocomotiveModelID) REFERENCES LocomotiveModel (ID);
@@ -187,21 +218,27 @@ ALTER TABLE Wagon_Freight ADD CONSTRAINT FK_Wagon_Freight_Wagon FOREIGN KEY (Wag
 ALTER TABLE Wagon_Freight ADD CONSTRAINT FK_Wagon_Freight_Freight FOREIGN KEY (FreightID) REFERENCES Freight (ID);
 ALTER TABLE Freight ADD CONSTRAINT FK_Freight_StartFacility FOREIGN KEY (StartID) REFERENCES Facility (ID);
 ALTER TABLE Freight ADD CONSTRAINT FK_Freight_EndFacility FOREIGN KEY (EndID) REFERENCES Facility (ID);
-ALTER TABLE Train_Line ADD CONSTRAINT FK_Train_Line_Train FOREIGN KEY (TrainID) REFERENCES Train (ID);
-ALTER TABLE Train_Line ADD CONSTRAINT FK_Train_Line_Line FOREIGN KEY (LineID) REFERENCES Line (ID);
+ALTER TABLE ActualRoute ADD CONSTRAINT FK_ActualRoute_Train FOREIGN KEY (TrainID) REFERENCES Train (ID);
+ALTER TABLE ActualRoute ADD CONSTRAINT FK_ActualRoute_Line FOREIGN KEY (LineID) REFERENCES Line (ID);
+ALTER TABLE PlannedRoute ADD CONSTRAINT FK_PlannedRoute_Train FOREIGN KEY (TrainID) REFERENCES Train (ID);
+ALTER TABLE PlannedRoute ADD CONSTRAINT FK_PlannedRoute_Line FOREIGN KEY (LineID) REFERENCES Line (ID);
+ALTER TABLE Facility_building ADD CONSTRAINT FK_Facility_Building_BuildingType FOREIGN KEY (BuildingTypeID) REFERENCES BuildingType (ID);
+ALTER TABLE Facility_building ADD CONSTRAINT FK_Facility_Building_Facility FOREIGN KEY (FacilityID) REFERENCES Facility (ID);
+ALTER TABLE FreightWagonUnload ADD CONSTRAINT FK_FreightWagonUnload_Wagon_Freight FOREIGN KEY (Wagon_FreightWagonWagonNumber, Wagon_FreightFreightID) REFERENCES Wagon_Freight (WagonWagonNumber, FreightID);
+ALTER TABLE Siding ADD CONSTRAINT FK_Siding_Segment FOREIGN KEY (SegmentID) REFERENCES Segment (ID);
 
 
 
 
-
-
-
-
+DROP TABLE ActualRoute CASCADE CONSTRAINTS;
+DROP TABLE BuildingType CASCADE CONSTRAINTS;
 DROP TABLE Diesel_locomotive CASCADE CONSTRAINTS;
 DROP TABLE Electric_locomotive CASCADE CONSTRAINTS;
 DROP TABLE Facility CASCADE CONSTRAINTS;
+DROP TABLE Facility_building CASCADE CONSTRAINTS;
 DROP TABLE FacilityType CASCADE CONSTRAINTS;
 DROP TABLE Freight CASCADE CONSTRAINTS;
+DROP TABLE FreightWagonUnload CASCADE CONSTRAINTS;
 DROP TABLE Gauge CASCADE CONSTRAINTS;
 DROP TABLE Gauge_WagonModel CASCADE CONSTRAINTS;
 DROP TABLE Line CASCADE CONSTRAINTS;
@@ -212,10 +249,11 @@ DROP TABLE LocomotiveModel CASCADE CONSTRAINTS;
 DROP TABLE LocomotiveModel_Gauge CASCADE CONSTRAINTS;
 DROP TABLE Operator CASCADE CONSTRAINTS;
 DROP TABLE Owner CASCADE CONSTRAINTS;
+DROP TABLE PlannedRoute CASCADE CONSTRAINTS;
 DROP TABLE Segment CASCADE CONSTRAINTS;
+DROP TABLE Siding CASCADE CONSTRAINTS;
 DROP TABLE Train CASCADE CONSTRAINTS;
 DROP TABLE Train_Freight CASCADE CONSTRAINTS;
-DROP TABLE Train_Line CASCADE CONSTRAINTS;
 DROP TABLE Wagon CASCADE CONSTRAINTS;
 DROP TABLE Wagon_Freight CASCADE CONSTRAINTS;
 DROP TABLE WagonModel CASCADE CONSTRAINTS;
