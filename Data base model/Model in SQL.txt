@@ -1,11 +1,11 @@
 CREATE TABLE ActualRoute (
   TrainID       number(38) NOT NULL, 
   LineID        number(38) NOT NULL, 
-  Directoion    varchar2(100) NOT NULL, 
+  Direction    varchar2(100) NOT NULL, 
   DepartureTime date NOT NULL, 
   ArrivalTime   date, 
   PRIMARY KEY (TrainID, 
-  LineID)
+  LineID),
 CONSTRAINT CK_ActualRoute_Time CHECK (ArrivalTime >= DepartureTime));
 CREATE TABLE BuildingType (
   ID   number(10) NOT NULL, 
@@ -35,7 +35,7 @@ CREATE TABLE Facility (
 CREATE TABLE Facility_building (
   BuildingTypeID number(10) NOT NULL, 
   FacilityID     number(38) NOT NULL, 
-  Number         number(10) NOT NULL, 
+  Count         number(10) NOT NULL, 
   PRIMARY KEY (BuildingTypeID, 
   FacilityID));
 CREATE TABLE FacilityType (

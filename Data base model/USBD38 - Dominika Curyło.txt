@@ -1,0 +1,74 @@
+CREATE OR REPLACE FUNCTION AddGauge(
+    p_Name  IN Gauge.Name%TYPE,
+    p_Gauge IN Gauge.Gauge%TYPE
+) RETURN VARCHAR2 IS
+    v_count NUMBER;
+BEGIN
+    IF p_Gauge <= 0 THEN
+        RETURN 'INVALID';
+    END IF;
+
+    -- Case and space check
+    SELECT count(*) INTO v_count 
+    FROM Gauge 
+    WHERE UPPER(TRIM(Name)) = UPPER(TRIM(p_Name));
+
+    IF v_count > 0 THEN
+        RETURN 'EXISTS';
+    END IF;
+
+    INSERT INTO Gauge (Name, Gauge) 
+    VALUES (TRIM(p_Name), p_Gauge);
+    
+    RETURN 'OK';
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN 'DB_ERROR'; 
+END AddGauge;
+/
+
+-----------------------------------------------------------------TESTS-----------------------------------------------------------------------------------
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_result     VARCHAR2(20);
+    v_name       VARCHAR2(100);
+
+    PROCEDURE Process_Result(p_Status IN VARCHAR2, p_ItemName IN VARCHAR2) IS
+    BEGIN
+        CASE p_Status
+            WHEN 'OK' THEN
+                DBMS_OUTPUT.PUT_LINE('[+] SUCCESS: Gauge "' || p_ItemName || '" was added.');
+            WHEN 'EXISTS' THEN
+                DBMS_OUTPUT.PUT_LINE('[-] ERROR: Gauge "' || p_ItemName || '" already exists.');
+            WHEN 'INVALID' THEN
+                DBMS_OUTPUT.PUT_LINE('[-] ERROR: Incorrect value (must be > 0).');
+            WHEN 'DB_ERROR' THEN
+                DBMS_OUTPUT.PUT_LINE('[!] ERROR: Unexpected Database mistake.');
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('[?] Unknown status: ' || p_Status);
+        END CASE;
+    END Process_Result;
+
+BEGIN
+    -- Cleanup to ensure test repeatability
+    v_name := 'Meter';
+    DELETE FROM Gauge WHERE UPPER(Name) = UPPER(v_name);
+
+    -- Case 1 - Correct entry
+    v_result := AddGauge(v_name, 1000);
+    Process_Result(v_result, v_name);
+
+    -- Case 2 - Duplicate and case insensitive check
+    v_result := AddGauge('meter', 1000); 
+    Process_Result(v_result, 'meter');
+
+    -- Case 3 - Incorrect value
+    v_result := AddGauge('Minus', -50);
+    Process_Result(v_result, 'Minus');
+    
+    COMMIT;
+END;
+/

@@ -1,0 +1,199 @@
+CREATE OR REPLACE FUNCTION AddSegmentToLine(
+    p_LineID       IN Line.ID%TYPE,
+    p_SegmentID    IN Segment.ID%TYPE,
+    p_SidingID     IN Siding.ID%TYPE        DEFAULT NULL,
+    p_SidingPos    IN Siding.Position%TYPE  DEFAULT NULL,
+    p_SidingLen    IN Siding.Length%TYPE    DEFAULT NULL
+) RETURN VARCHAR2 IS
+    v_check NUMBER;
+BEGIN
+    SELECT count(*) INTO v_check FROM Line WHERE ID = p_LineID;
+    IF v_check = 0 THEN 
+        RETURN 'LINE_NOT_FOUND'; 
+    END IF;
+
+    SELECT count(*) INTO v_check FROM Segment WHERE ID = p_SegmentID;
+    IF v_check = 0 THEN 
+        RETURN 'SEGMENT_NOT_FOUND'; 
+    END IF;
+
+    SELECT count(*) INTO v_check FROM Line_Segment 
+    WHERE LineID = p_LineID AND SegmentID = p_SegmentID;
+    
+    IF v_check > 0 THEN 
+        RETURN 'LINK_EXISTS'; 
+    END IF;
+
+    SAVEPOINT sp_link_creation;
+
+    BEGIN
+        INSERT INTO Line_Segment (LineID, SegmentID) 
+        VALUES (p_LineID, p_SegmentID);
+
+        IF p_SidingID IS NOT NULL THEN
+            
+            IF p_SidingPos IS NULL OR p_SidingLen IS NULL THEN
+                ROLLBACK TO sp_link_creation;
+                RETURN 'SIDING_DATA_MISSING';
+            END IF;
+
+            BEGIN
+                INSERT INTO Siding (ID, Position, Length, SegmentID)
+                VALUES (p_SidingID, p_SidingPos, p_SidingLen, p_SegmentID);
+            EXCEPTION
+                WHEN DUP_VAL_ON_INDEX THEN
+                    ROLLBACK TO sp_link_creation;
+                    RETURN 'SIDING_EXISTS';
+                WHEN OTHERS THEN
+                    ROLLBACK TO sp_link_creation;
+                    RETURN 'SIDING_DB_ERROR';
+            END;
+        END IF;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK TO sp_link_creation;
+            RETURN 'DB_ERROR_INSERTING_LINK';
+    END;
+
+    RETURN 'OK';
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN 'CRITICAL_ERROR';
+END AddSegmentToLine;
+/
+-----------------------------------------------------------------TESTS-----------------------------------------------------------------------------------
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_OwnerName     VARCHAR2(50) := 'IP';
+    v_GaugeName     VARCHAR2(50) := 'Iberian';
+    v_LineID        NUMBER := 9001;
+    v_Seg_NoSiding  NUMBER := 8001;
+    v_Seg_WithSiding NUMBER := 8002;
+    v_Seg_Fail      NUMBER := 8003;
+    v_SidingID      NUMBER := 701;
+    v_result        VARCHAR2(100);
+    v_validation    NUMBER;
+
+PROCEDURE Report_Test(p_Scenario VARCHAR2, p_Expected VARCHAR2, p_Actual VARCHAR2) IS
+    BEGIN
+        IF p_Expected = p_Actual THEN
+            DBMS_OUTPUT.PUT_LINE('[PASS] ' || p_Scenario || ' -> Result: ' || p_Actual);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('[FAIL] ' || p_Scenario || ' -> Expected: ' || p_Expected || ', Received: ' || p_Actual);
+        END IF;
+    END Report_Test;
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('====== Part 1 - data setup ======');
+    
+    BEGIN
+        SELECT COUNT(*) INTO v_validation FROM Owner WHERE UPPER(ShortName) = UPPER(v_OwnerName);
+        IF v_validation = 0 THEN
+            INSERT INTO Owner (ShortName, Name, VATnumber) VALUES (v_OwnerName, 'Infraestruturas Test', 'PT999999999');
+        END IF;
+    EXCEPTION WHEN OTHERS THEN NULL; END;
+
+    BEGIN
+        SELECT COUNT(*) INTO v_validation FROM Gauge WHERE UPPER(Name) = UPPER(v_GaugeName);
+        IF v_validation = 0 THEN
+            INSERT INTO Gauge (Name, Gauge) VALUES (v_GaugeName, 1668);
+        END IF;
+    EXCEPTION WHEN OTHERS THEN NULL; END;
+
+    BEGIN
+        INSERT INTO FacilityType (FacilityTypeID, Name) VALUES (1, 'Station');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName)
+        VALUES (1001, 'Test Station A', 1, 'Addr1', 'City1', 10, 'Yes', v_OwnerName);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName)
+        VALUES (1002, 'Test Station B', 1, 'Addr2', 'City2', 10, 'Yes', v_OwnerName);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Line (ID, Name, StartID, EndID, OwnerShortName, GaugeName) 
+        VALUES (v_LineID, 'Line Test 9001', 1001, 1002, v_OwnerName, v_GaugeName);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Segment (ID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+        VALUES (v_Seg_NoSiding, 1, 'Yes', 22.5, 1000, 2, 120);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+    
+    BEGIN
+        INSERT INTO Segment (ID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+        VALUES (v_Seg_WithSiding, 2, 'Yes', 22.5, 2000, 2, 120);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Segment (ID, "Order", Electrified, Max_weight, Length, NumberOfTracks, SpeedLimit)
+        VALUES (v_Seg_Fail, 3, 'Yes', 22.5, 500, 1, 80);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+    
+    -- Cleaning old data
+    DELETE FROM Siding WHERE SegmentID IN (v_Seg_NoSiding, v_Seg_WithSiding, v_Seg_Fail);
+    DELETE FROM Line_Segment WHERE LineID = v_LineID AND SegmentID IN (v_Seg_NoSiding, v_Seg_WithSiding, v_Seg_Fail);
+    
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('====== Part 2 - tests ======');
+
+    -- Case 1 - Happy case, no siding
+    v_result := AddSegmentToLine(v_LineID, v_Seg_NoSiding);
+    Report_Test('Add Segment Basic', 'OK', v_result);
+
+    -- Case 2 - fail, duplicate
+    v_result := AddSegmentToLine(v_LineID, v_Seg_NoSiding);
+    Report_Test('Add Duplicate Segment', 'LINK_EXISTS', v_result);
+
+    -- Case 3 - Happy case, with sliding
+    v_result := AddSegmentToLine(
+        p_LineID    => v_LineID,
+        p_SegmentID => v_Seg_WithSiding,
+        p_SidingID  => v_SidingID,
+        p_SidingPos => 500,
+        p_SidingLen => 250
+    );
+    Report_Test('Add Segment with Siding', 'OK', v_result);
+
+    -- Check for added siding
+    SELECT count(*) INTO v_validation FROM Siding WHERE ID = v_SidingID;
+    IF v_validation = 1 THEN
+        DBMS_OUTPUT.PUT_LINE('   -> Data Base: Siding added [SUCCES]');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('   -> Data Base: Siding does not exist [FAIL]');
+    END IF;
+
+    -- Case 4 - fail of siding
+    v_result := AddSegmentToLine(
+        p_LineID    => v_LineID,
+        p_SegmentID => v_Seg_Fail,
+        p_SidingID  => 9999,
+        p_SidingPos => 100,
+        p_SidingLen => NULL
+    );
+    Report_Test('Add Segment w/ Invalid Siding', 'SIDING_DATA_MISSING', v_result);
+
+    -- Check for added segment
+    SELECT count(*) INTO v_validation FROM Line_Segment WHERE LineID = v_LineID AND SegmentID = v_Seg_Fail;
+    IF v_validation = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('   -> Data Base: Segment CORRECTLY NOT added [OK]');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('   -> Data Base: Segment EXISTS AND SHOULD NOT [ROLLBACK FAIL]');
+    END IF;
+
+    -- Case 5 - nonexisting line
+    v_result := AddSegmentToLine(999999, v_Seg_NoSiding);
+    Report_Test('Invalid Line ID', 'LINE_NOT_FOUND', v_result);
+
+    DBMS_OUTPUT.PUT_LINE('====== End of the tests ======');
+    
+END;
+/
