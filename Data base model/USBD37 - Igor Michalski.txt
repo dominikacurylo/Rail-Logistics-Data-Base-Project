@@ -1,0 +1,79 @@
+CREATE OR REPLACE FUNCTION fn_register_model_gauge(
+    p_ModelID   IN NUMBER,
+    p_GaugeName IN VARCHAR2,
+    p_GaugeSize IN NUMBER
+) RETURN VARCHAR2 IS
+BEGIN
+
+    IF p_GaugeSize <= 0 THEN
+        RETURN 'ERROR_NEGATIVE_GAUGE';
+    END IF;
+
+    BEGIN
+        INSERT INTO Gauge (Name, Gauge) VALUES (p_GaugeName, p_GaugeSize);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    INSERT INTO Gauge_WagonModel (GaugeName, WagonModelModelNumber) 
+    VALUES (p_GaugeName, p_ModelID);
+    
+    RETURN 'GAUGE_ADDED';
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN RETURN 'GAUGE_ADDED';
+    WHEN OTHERS THEN RETURN 'ERROR';
+END;
+/
+
+CREATE OR REPLACE FUNCTION fn_register_wagon(
+    p_WagonNumber IN VARCHAR2,
+    p_ModelID     IN NUMBER,
+    p_Year        IN NUMBER,
+    p_Operator    IN VARCHAR2
+) RETURN VARCHAR2 IS
+    v_check NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_check FROM Gauge_WagonModel WHERE WagonModelModelNumber = p_ModelID;
+    
+    IF v_check = 0 THEN RETURN 'ERROR_NO_GAUGE'; END IF;
+
+    INSERT INTO Wagon (WagonNumber, ModelID, ServiceYear, OperatorShortName)
+    VALUES (p_WagonNumber, p_ModelID, p_Year, p_Operator);
+    
+    RETURN 'WAGON_ADDED';
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN RETURN 'ERROR_WAGON_ALREADY_EXISTS';
+    WHEN OTHERS THEN RETURN 'ERROR';
+END;
+/
+
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_res VARCHAR2(100); 
+BEGIN
+    
+    BEGIN
+        INSERT INTO Operator (ShortName, Name, VATNumber)
+        VALUES ('Medway', 'Medway - Operador Ferroviário de Mercadorias, S.A', 'PT509017800');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO WagonType (ID, Name)
+        VALUES (1, 'Cereal wagon');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID)
+        VALUES (1245, 'Tadgs 32 94 082 3', 'Metalsines', 2, 'Duplo', 17240, 3072, 4270, 24, 120, 56, 75, 1);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    v_res := fn_register_model_gauge(1245, 'Iberian', 1668);
+    DBMS_OUTPUT.PUT_LINE('GAUGE RESULT: ' || v_res);
+
+    v_res := fn_register_wagon('TEST-MEDWAY-001', 1245, 2024, 'Medway');
+    DBMS_OUTPUT.PUT_LINE('WAGON RESULT: ' || v_res);
+
+    ROLLBACK;
+END;
+/
+
