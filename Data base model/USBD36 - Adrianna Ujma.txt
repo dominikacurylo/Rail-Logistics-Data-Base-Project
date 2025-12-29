@@ -1,0 +1,31 @@
+--USBD36
+
+CREATE OR REPLACE FUNCTION fncAddBuildingToFacility(
+    p_facility_id IN number,
+    p_building_type_id IN number,
+    p_quantity IN number
+) RETURN SYS_REFCURSOR IS
+    v_cursor SYS_REFCURSOR;
+    v_exists number;
+BEGIN
+    SELECT COUNT(*) INTO v_exists 
+    FROM Facility_building 
+    WHERE FacilityID = p_facility_id AND BuildingTypeID = p_building_type_id;
+
+    IF v_exists > 0 THEN 
+        UPDATE Facility_building 
+        SET Count = Count + p_quantity
+        WHERE FacilityID = p_facility_id AND BuildingTypeID = p_building_type_id;
+    ELSE
+        INSERT INTO Facility_building (BuildingTypeID, FacilityID, Count)
+        VALUES (p_building_type_id, p_facility_id, p_quantity);
+    END IF;
+
+    COMMIT; 
+
+    OPEN v_cursor FOR
+        SELECT * FROM Facility_building WHERE FacilityID = p_facility_id;
+
+    RETURN v_cursor;
+END;
+/

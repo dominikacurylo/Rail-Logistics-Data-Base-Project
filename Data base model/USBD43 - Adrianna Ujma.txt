@@ -1,0 +1,42 @@
+--USBD43
+
+CREATE OR REPLACE FUNCTION fncAddElectricLocomotiveModel(
+    p_model_id IN number,
+    p_make IN varchar2,
+    p_model_name IN varchar2,
+    p_num_bogies IN number,
+    p_bogies_desc IN varchar2,
+    p_power IN number,
+    p_length IN float,
+    p_width IN float,
+    p_height IN number,
+    p_weight IN number,
+    p_max_speed IN number,
+    p_op_speed IN float,
+    p_traction IN number,
+    p_voltage IN number,
+    p_frequency IN number
+) RETURN SYS_REFCURSOR IS
+    v_cursor SYS_REFCURSOR;
+BEGIN
+    INSERT INTO Electric_locomotive (ElectricTypeID, Voltage, Frequency)
+    VALUES (p_model_id, p_voltage, p_frequency);
+
+    INSERT INTO LocomotiveModel (
+        ID, Make, Model, NumberBogies, Bogies, Power, Length, Width, 
+        Height, Weight, MaxSpeed, OperationalSpeed, Traction, 
+        DieselTypeID, ElectricTypeID
+    ) VALUES (
+        p_model_id, p_make, p_model_name, p_num_bogies, p_bogies_desc, p_power, p_length, p_width, 
+        p_height, p_weight, p_max_speed, p_op_speed, p_traction, 
+        NULL, p_model_id
+    );
+
+    COMMIT; 
+
+    OPEN v_cursor FOR
+        SELECT * FROM LocomotiveModel WHERE ID = p_model_id;
+
+    RETURN v_cursor;
+END;
+/
