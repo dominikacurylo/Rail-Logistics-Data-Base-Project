@@ -1,42 +1,102 @@
 --USBD43
 
-CREATE OR REPLACE FUNCTION fncAddElectricLocomotiveModel(
-    p_model_id IN number,
-    p_make IN varchar2,
-    p_model_name IN varchar2,
-    p_num_bogies IN number,
-    p_bogies_desc IN varchar2,
-    p_power IN number,
-    p_length IN float,
-    p_width IN float,
-    p_height IN number,
-    p_weight IN number,
-    p_max_speed IN number,
-    p_op_speed IN float,
-    p_traction IN number,
-    p_voltage IN number,
-    p_frequency IN number
-) RETURN SYS_REFCURSOR IS
-    v_cursor SYS_REFCURSOR;
+CREATE OR REPLACE FUNCTION AddElectricLocoModel(
+    p_ID IN NUMBER,
+    p_Make IN VARCHAR2,
+    p_Model IN VARCHAR2,
+    p_BogiesNum IN NUMBER,
+    p_BogiesType IN VARCHAR2,
+    p_Power IN NUMBER,
+    p_Length IN FLOAT,
+    p_Width IN FLOAT,
+    p_Height IN NUMBER,
+    p_Weight IN NUMBER,
+    p_MaxSpeed IN NUMBER,
+    p_OpSpeed IN FLOAT,
+    p_Traction IN NUMBER,
+    p_Voltage IN NUMBER,
+    p_Frequency IN NUMBER
+) RETURN VARCHAR2 IS
+    v_exists NUMBER;
 BEGIN
-    INSERT INTO Electric_locomotive (ElectricTypeID, Voltage, Frequency)
-    VALUES (p_model_id, p_voltage, p_frequency);
+  
+    SELECT COUNT(*) INTO v_exists FROM LocomotiveModel WHERE ID = p_ID;
+    IF v_exists > 0 THEN
+        RETURN 'MODEL_EXISTS';
+    END IF;
 
-    INSERT INTO LocomotiveModel (
+
+    INSERT INTO Electric_locomotive (ElectricTypeID, Voltage, Frequency)
+    VALUES (p_ID, p_Voltage, p_Frequency);
+
+
+      INSERT INTO LocomotiveModel (
         ID, Make, Model, NumberBogies, Bogies, Power, Length, Width, 
-        Height, Weight, MaxSpeed, OperationalSpeed, Traction, 
-        DieselTypeID, ElectricTypeID
+        Height, Weight, MaxSpeed, OperationalSpeed, Traction, ElectricTypeID, DieselTypeID
     ) VALUES (
-        p_model_id, p_make, p_model_name, p_num_bogies, p_bogies_desc, p_power, p_length, p_width, 
-        p_height, p_weight, p_max_speed, p_op_speed, p_traction, 
-        NULL, p_model_id
+        p_ID, p_Make, p_Model, p_BogiesNum, p_BogiesType, p_Power, p_Length, p_Width, 
+        p_Height, p_Weight, p_MaxSpeed, p_OpSpeed, p_Traction, p_ID, NULL
     );
 
-    COMMIT; 
+    COMMIT;
+    RETURN 'OK';
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RETURN 'ERROR';
+END;
+/
 
-    OPEN v_cursor FOR
-        SELECT * FROM LocomotiveModel WHERE ID = p_model_id;
+------------------tests----------------------
 
-    RETURN v_cursor;
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_LocoID      NUMBER := 5001;
+    v_result      VARCHAR2(100);
+    v_validation  NUMBER;
+
+    PROCEDURE Report_Test(p_Scenario VARCHAR2, p_Expected VARCHAR2, p_Actual VARCHAR2) IS
+    BEGIN
+        IF p_Expected = p_Actual THEN
+            DBMS_OUTPUT.PUT_LINE('[PASS] ' || p_Scenario || ' -> Result: ' || p_Actual);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('[FAIL] ' || p_Scenario || ' -> Expected: ' || p_Expected || ', Received: ' || p_Actual);
+        END IF;
+    END Report_Test;
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('====== USBD43 - Tests ======');
+
+    
+    DELETE FROM LocomotiveModel WHERE ID = v_LocoID;
+    DELETE FROM Electric_locomotive WHERE ElectricTypeID = v_LocoID;
+    COMMIT;
+
+
+    v_result := AddElectricLocoModel(
+        v_LocoID, 'Siemens', 'Vectron', 2, 'B0-B0', 6400, 18.98, 3.01, 4, 87, 200, 160.0, 300, 25000, 50
+    );
+    Report_Test('Add Electric Loco Valid', 'OK', v_result);
+
+ 
+    SELECT COUNT(*) INTO v_validation 
+    FROM LocomotiveModel lm
+    JOIN Electric_locomotive el ON lm.ElectricTypeID = el.ElectricTypeID
+    WHERE lm.ID = v_LocoID;
+
+    IF v_validation = 1 THEN
+        DBMS_OUTPUT.PUT_LINE('   -> Database: Model correctly linked in both tables [OK]');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('   -> Database: Missing links [FAIL]');
+    END IF;
+
+
+    v_result := AddElectricLocoModel(
+        v_LocoID, 'Siemens', 'Vectron', 2, 'B0-B0', 6400, 18.98, 3.01, 4, 87, 200, 160.0, 300, 25000, 50
+    );
+    Report_Test('Add Duplicate Loco ID', 'MODEL_EXISTS', v_result);
+
+    DBMS_OUTPUT.PUT_LINE('====== End of Tests ======');
 END;
 /
