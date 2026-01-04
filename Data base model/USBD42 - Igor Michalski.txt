@@ -1,0 +1,141 @@
+CREATE OR REPLACE FUNCTION fn_register_actual_route(
+    p_TrainID       IN NUMBER,
+    p_LineID        IN NUMBER,
+    p_Direction     IN VARCHAR2,
+    p_DepartureTime IN DATE,
+    p_ArrivalTime   IN DATE DEFAULT NULL
+) RETURN VARCHAR2 IS
+BEGIN
+
+    INSERT INTO ActualRoute (
+        TrainID, 
+        LineID, 
+        Direction, 
+        DepartureTime, 
+        ArrivalTime
+    ) VALUES (
+        p_TrainID, 
+        p_LineID, 
+        p_Direction, 
+        p_DepartureTime, 
+        p_ArrivalTime
+    );
+    
+    RETURN 'SUCCESS: Movement registered for Train ' || p_TrainID || ' on Line ' || p_LineID;
+
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        RETURN 'ERROR: Movement already exists for this Train and Line.';
+    WHEN OTHERS THEN
+       IF p_ArrivalTime IS NOT NULL AND p_ArrivalTime < p_DepartureTime THEN
+             RETURN 'ERROR: Arrival time cannot be earlier than Departure time.';
+        ELSE
+             RETURN 'ERROR: ' || SQLERRM;
+        END IF;
+END;
+/
+
+
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_res VARCHAR2(200);
+    
+    v_dep_1 DATE := TO_DATE('2025-04-01 10:00:00', 'YYYY-MM-DD HH24:MI:SS');
+    v_arr_1 DATE := TO_DATE('2025-04-01 10:15:00', 'YYYY-MM-DD HH24:MI:SS');
+    
+    v_dep_2 DATE := TO_DATE('2025-04-01 10:25:00', 'YYYY-MM-DD HH24:MI:SS'); 
+    v_arr_2 DATE := TO_DATE('2025-04-01 10:45:00', 'YYYY-MM-DD HH24:MI:SS');
+
+    v_check_name VARCHAR2(100);
+    v_check_dep  DATE;
+    v_check_arr  DATE;
+
+BEGIN
+    
+    BEGIN
+        INSERT INTO Owner (ShortName, Name, VATnumber) VALUES ('IP', 'Infraestruturas', 'PT503933813');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+    
+    BEGIN
+        INSERT INTO FacilityType (FacilityTypeID, Name) VALUES (1, 'Station');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+    
+    BEGIN
+        INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName)
+        VALUES (7, 'Porto São Bento', 1, 'Centro', 'Porto', 10, 'Yes', 'IP');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName)
+        VALUES (5, 'Porto Campanhã', 1, 'Campanha', 'Porto', 20, 'Yes', 'IP');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName)
+        VALUES (14, 'Ermesinde', 1, 'Rua Estacao', 'Valongo', 15, 'Yes', 'IP');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Gauge (Name, Gauge) VALUES ('Iberian', 1668);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Line (ID, Name, StartID, EndID, OwnerShortName, GaugeName)
+        VALUES (100, 'Line A-B', 7, 5, 'IP', 'Iberian');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Line (ID, Name, StartID, EndID, OwnerShortName, GaugeName)
+        VALUES (200, 'Line B-C', 5, 14, 'IP', 'Iberian');
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    BEGIN
+        INSERT INTO Train (ID, MaxLength) VALUES (1, 200);
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
+    DBMS_OUTPUT.PUT_LINE('START TEST');
+
+    v_res := fn_register_actual_route(
+        p_TrainID       => 1,
+        p_LineID        => 100,
+        p_Direction     => 'São Bento -> Campanhã',
+        p_DepartureTime => v_dep_1,
+        p_ArrivalTime   => v_arr_1
+    );
+    DBMS_OUTPUT.PUT_LINE('Route: São Bento -> Campanhã Result: ' || v_res);
+
+    v_res := fn_register_actual_route(
+        p_TrainID       => 1,
+        p_LineID        => 200, 
+        p_Direction     => 'Campanhã -> Ermesinde',
+        p_DepartureTime => v_dep_2,
+        p_ArrivalTime   => v_arr_2
+    );
+    DBMS_OUTPUT.PUT_LINE('Route: Campanhã -> Ermesinde Result: ' || v_res);
+
+    SELECT l.Name, ar.DepartureTime, ar.ArrivalTime 
+    INTO v_check_name, v_check_dep, v_check_arr
+    FROM ActualRoute ar
+    JOIN Line l ON ar.LineID = l.ID
+    WHERE ar.TrainID = 1 AND ar.LineID = 100;
+
+    DBMS_OUTPUT.PUT_LINE('Line: ' || v_check_name || 
+    ' | Dep: ' || TO_CHAR(v_check_dep, 'HH24:MI') || 
+    ' | Arr: ' || TO_CHAR(v_check_arr, 'HH24:MI'));
+
+    SELECT l.Name, ar.DepartureTime, ar.ArrivalTime 
+    INTO v_check_name, v_check_dep, v_check_arr
+    FROM ActualRoute ar
+    JOIN Line l ON ar.LineID = l.ID
+    WHERE ar.TrainID = 1 AND ar.LineID = 200;
+
+    DBMS_OUTPUT.PUT_LINE('Line: ' || v_check_name || 
+    ' | Dep: ' || TO_CHAR(v_check_dep, 'HH24:MI') || 
+    ' | Arr: ' || TO_CHAR(v_check_arr, 'HH24:MI')
+    );
+
+    ROLLBACK;
+END;
+/
