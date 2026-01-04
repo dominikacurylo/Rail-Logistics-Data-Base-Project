@@ -1,4 +1,5 @@
---USBD36
+--USBD36--
+
 
 CREATE OR REPLACE FUNCTION AddBuildingToFacility(
     p_FacilityID IN NUMBER,
@@ -7,7 +8,11 @@ CREATE OR REPLACE FUNCTION AddBuildingToFacility(
 ) RETURN VARCHAR2 IS
     v_exists NUMBER;
 BEGIN
-      SELECT COUNT(*) INTO v_exists FROM Facility WHERE ID = p_FacilityID;
+    IF p_Count <= 0 THEN
+        RETURN 'INVALID';
+    END IF;
+
+    SELECT COUNT(*) INTO v_exists FROM Facility WHERE ID = p_FacilityID;
     IF v_exists = 0 THEN
         RETURN 'FACILITY_NOT_FOUND';
     END IF;
@@ -21,7 +26,6 @@ BEGIN
     SET Count = Count + p_Count
     WHERE FacilityID = p_FacilityID AND BuildingTypeID = p_BuildingTypeID;
 
- 
     IF SQL%NOTFOUND THEN
         INSERT INTO Facility_building (FacilityID, BuildingTypeID, Count)
         VALUES (p_FacilityID, p_BuildingTypeID, p_Count);
@@ -29,48 +33,50 @@ BEGIN
 
     COMMIT;
     RETURN 'OK';
+
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         RETURN 'ERROR';
-END;
+END AddBuildingToFacility;
 /
 
 ------------------tests----------------------
+
 SET SERVEROUTPUT ON;
 
 DECLARE
+    v_result      VARCHAR2(100);
     v_FacID       NUMBER := 100;
     v_BldTypeID   NUMBER := 10;
-    v_result      VARCHAR2(100);
-    v_validation  NUMBER;
-
- 
+    
     PROCEDURE Report_Test(p_Scenario VARCHAR2, p_Expected VARCHAR2, p_Actual VARCHAR2) IS
     BEGIN
         IF p_Expected = p_Actual THEN
-            DBMS_OUTPUT.PUT_LINE('[PASS] ' || p_Scenario || ' -> Result: ' || p_Actual);
+            DBMS_OUTPUT.PUT_LINE('[PASS] ' || p_Scenario || '; Result: ' || p_Actual);
         ELSE
-            DBMS_OUTPUT.PUT_LINE('[FAIL] ' || p_Scenario || ' -> Expected: ' || p_Expected || ', Received: ' || p_Actual);
+            DBMS_OUTPUT.PUT_LINE('[FAIL] ' || p_Scenario || '; Expected: ' || p_Expected || ', Received: ' || p_Actual);
         END IF;
     END Report_Test;
 
 BEGIN
-    DBMS_OUTPUT.PUT_LINE('====== USBD36 - Data Setup ======');
+    DBMS_OUTPUT.PUT_LINE('======= USBD36 data setup =======');
+
 
     BEGIN
-        INSERT INTO Owner (ShortName, Name, VATnumber) VALUES ('TEST_OWN', 'Test Owner', 'PT111222333');
+        INSERT INTO Owner (ShortName, Name, VATnumber) 
+        VALUES ('IP', 'Infraestruturas de Portugal, SA', 'PT503933813');
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
 
- 
     BEGIN
-        INSERT INTO FacilityType (FacilityTypeID, Name) VALUES (1, 'Station');
+        INSERT INTO FacilityType (FacilityTypeID, Name) VALUES (5, 'Railway Station');
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
 
     BEGIN
         INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName)
-        VALUES (v_FacID, 'Test Station 100', 1, 'Main St', 'London', 50, 'Yes', 'TEST_OWN');
+        VALUES (v_FacID, 'Barroselas', 5, 'Rua da Estacao', 'Barroselas', 50, 'Yes', 'IP');
     EXCEPTION WHEN DUP_VAL_ON_INDEX THEN NULL; END;
+
 
     BEGIN
         INSERT INTO BuildingType (ID, Type) VALUES (v_BldTypeID, 'Warehouse');
@@ -78,17 +84,24 @@ BEGIN
 
     COMMIT;
 
-    DBMS_OUTPUT.PUT_LINE('====== USBD36 - Tests ======');
+    DBMS_OUTPUT.PUT_LINE('====== USBD36 tests ======');
 
+    -- Case 1: adding buildings correctly
     v_result := AddBuildingToFacility(v_FacID, v_BldTypeID, 5);
     Report_Test('Add Building Valid', 'OK', v_result);
 
+    -- Case 2: negative count 
+    v_result := AddBuildingToFacility(v_FacID, v_BldTypeID, -10);
+    Report_Test('Negative Count Check', 'INVALID', v_result);
+
+    -- Case 3: non-existing facility
     v_result := AddBuildingToFacility(9999, v_BldTypeID, 1);
     Report_Test('Invalid Facility ID', 'FACILITY_NOT_FOUND', v_result);
 
+    -- Case 4: non-existing building type
     v_result := AddBuildingToFacility(v_FacID, 9999, 1);
-    Report_Test('Invalid Building Type ID', 'BUILDING_TYPE_NOT_FOUND', v_result);
+    Report_Test('Invalid Building Type', 'BUILDING_TYPE_NOT_FOUND', v_result);
 
-    DBMS_OUTPUT.PUT_LINE('====== End of Tests ======');
+    DBMS_OUTPUT.PUT_LINE('======= End of tests =======');
 END;
 /

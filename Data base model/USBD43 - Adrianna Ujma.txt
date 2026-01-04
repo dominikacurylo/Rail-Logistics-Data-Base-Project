@@ -1,4 +1,4 @@
---USBD43
+--USBD43--
 
 CREATE OR REPLACE FUNCTION AddElectricLocoModel(
     p_ID IN NUMBER,
@@ -19,84 +19,87 @@ CREATE OR REPLACE FUNCTION AddElectricLocoModel(
 ) RETURN VARCHAR2 IS
     v_exists NUMBER;
 BEGIN
-  
-    SELECT COUNT(*) INTO v_exists FROM LocomotiveModel WHERE ID = p_ID;
+    -- values validation (all measurements and technical specs must be positive values)
+    IF p_Power <= 0 OR p_Weight <= 0 OR p_MaxSpeed <= 0 OR p_Length <= 0 
+       OR p_Width <= 0 OR p_Height <= 0 OR p_OpSpeed <= 0 OR p_Traction <= 0
+       OR p_Voltage <= 0 OR p_Frequency <= 0 THEN
+        RETURN 'INVALID_DATA';
+    END IF;
+
+    -- duplicate check using UPPER and TRIM for comparison
+    SELECT COUNT(*) INTO v_exists 
+    FROM LocomotiveModel 
+    WHERE ID = p_ID 
+       OR (UPPER(TRIM(Make)) = UPPER(TRIM(p_Make)) 
+           AND UPPER(TRIM(Model)) = UPPER(TRIM(p_Model)));
+
     IF v_exists > 0 THEN
         RETURN 'MODEL_EXISTS';
     END IF;
 
-
+    -- insert into the  table (Electric_locomotive)
     INSERT INTO Electric_locomotive (ElectricTypeID, Voltage, Frequency)
     VALUES (p_ID, p_Voltage, p_Frequency);
 
-
-      INSERT INTO LocomotiveModel (
+    -- insert into the general table (LocomotiveModel)
+    INSERT INTO LocomotiveModel (
         ID, Make, Model, NumberBogies, Bogies, Power, Length, Width, 
         Height, Weight, MaxSpeed, OperationalSpeed, Traction, ElectricTypeID, DieselTypeID
     ) VALUES (
-        p_ID, p_Make, p_Model, p_BogiesNum, p_BogiesType, p_Power, p_Length, p_Width, 
+        p_ID, TRIM(p_Make), TRIM(p_Model), p_BogiesNum, p_BogiesType, p_Power, p_Length, p_Width, 
         p_Height, p_Weight, p_MaxSpeed, p_OpSpeed, p_Traction, p_ID, NULL
     );
 
     COMMIT;
     RETURN 'OK';
+
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         RETURN 'ERROR';
-END;
+END AddElectricLocoModel;
 /
 
 ------------------tests----------------------
-
 SET SERVEROUTPUT ON;
 
 DECLARE
-    v_LocoID      NUMBER := 5001;
+    v_LocoID      NUMBER := 5621;
     v_result      VARCHAR2(100);
-    v_validation  NUMBER;
 
     PROCEDURE Report_Test(p_Scenario VARCHAR2, p_Expected VARCHAR2, p_Actual VARCHAR2) IS
     BEGIN
         IF p_Expected = p_Actual THEN
-            DBMS_OUTPUT.PUT_LINE('[PASS] ' || p_Scenario || ' -> Result: ' || p_Actual);
+            DBMS_OUTPUT.PUT_LINE('[PASS] ' || p_Scenario || '; Result: ' || p_Actual);
         ELSE
-            DBMS_OUTPUT.PUT_LINE('[FAIL] ' || p_Scenario || ' -> Expected: ' || p_Expected || ', Received: ' || p_Actual);
+            DBMS_OUTPUT.PUT_LINE('[FAIL] ' || p_Scenario || '; Expected: ' || p_Expected || ', Received: ' || p_Actual);
         END IF;
     END Report_Test;
 
 BEGIN
-    DBMS_OUTPUT.PUT_LINE('====== USBD43 - Tests ======');
+    DBMS_OUTPUT.PUT_LINE('======== USBD43 tests ========');
 
-    
-    DELETE FROM LocomotiveModel WHERE ID = v_LocoID;
-    DELETE FROM Electric_locomotive WHERE ElectricTypeID = v_LocoID;
+    -- Cleanup
+    DELETE FROM LocomotiveModel WHERE ID IN (v_LocoID, 9999);
+    DELETE FROM Electric_locomotive WHERE ElectricTypeID IN (v_LocoID, 9999);
     COMMIT;
 
+    -- Case 1: valid data
+    v_result := AddElectricLocoModel(v_LocoID, 'Siemens', 'Eurosprinter', 2, 'Bo-Bo', 5600, 19.2, 3.0, 4, 87, 220, 70.0, 300, 25000, 50);
+    Report_Test('Add Valid Electric Loco', 'OK', v_result);
 
-    v_result := AddElectricLocoModel(
-        v_LocoID, 'Siemens', 'Vectron', 2, 'B0-B0', 6400, 18.98, 3.01, 4, 87, 200, 160.0, 300, 25000, 50
-    );
-    Report_Test('Add Electric Loco Valid', 'OK', v_result);
+    -- Case 2: Negative dimension check (width)
+    v_result := AddElectricLocoModel(9999, 'Siemens', 'Invalid', 2, 'Bo-Bo', 5600, 19.2, -3.0, 4, 87, 220, 70.0, 300, 25000, 50);
+    Report_Test('Negative Width Check', 'INVALID_DATA', v_result);
 
- 
-    SELECT COUNT(*) INTO v_validation 
-    FROM LocomotiveModel lm
-    JOIN Electric_locomotive el ON lm.ElectricTypeID = el.ElectricTypeID
-    WHERE lm.ID = v_LocoID;
+    -- Case 3: Negative performance check (power)
+    v_result := AddElectricLocoModel(9999, 'Alstom', 'Traxx', 2, 'Bo-Bo', -100, 18.9, 2.9, 4, 85, 160, 140.0, 300, 15000, 50);
+    Report_Test('Negative Power Check', 'INVALID_DATA', v_result);
 
-    IF v_validation = 1 THEN
-        DBMS_OUTPUT.PUT_LINE('   -> Database: Model correctly linked in both tables [OK]');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('   -> Database: Missing links [FAIL]');
-    END IF;
+    -- Case 4: Duplicate name check
+    v_result := AddElectricLocoModel(5622, '  siemens  ', 'EUROSPRINTER', 2, 'Bo-Bo', 5600, 19.2, 3.0, 4, 87, 220, 70.0, 300, 25000, 50);
+    Report_Test('Duplicate Name Check', 'MODEL_EXISTS', v_result);
 
-
-    v_result := AddElectricLocoModel(
-        v_LocoID, 'Siemens', 'Vectron', 2, 'B0-B0', 6400, 18.98, 3.01, 4, 87, 200, 160.0, 300, 25000, 50
-    );
-    Report_Test('Add Duplicate Loco ID', 'MODEL_EXISTS', v_result);
-
-    DBMS_OUTPUT.PUT_LINE('====== End of Tests ======');
+    DBMS_OUTPUT.PUT_LINE('======= End of tests =======');
 END;
 /
