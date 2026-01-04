@@ -1,0 +1,136 @@
+CREATE OR REPLACE TRIGGER trg_check_train_max_length
+BEFORE INSERT OR UPDATE ON Wagon_Freight
+FOR EACH ROW
+DECLARE
+    v_current_total_length NUMBER := 0;
+    v_max_allowed_length   NUMBER;
+    v_new_wagon_length     NUMBER;
+    v_train_id             NUMBER;
+BEGIN
+    -- identify the train linked to this specific freight
+    SELECT TrainID INTO v_train_id 
+    FROM Train_Freight 
+    WHERE FreightID = :NEW.FreightID;
+
+    -- get the maximum length defined for this train
+    SELECT MaxLength INTO v_max_allowed_length 
+    FROM Train 
+    WHERE ID = v_train_id;
+
+    -- calculate current total length
+    SELECT NVL(SUM(wm.Length), 0) INTO v_current_total_length
+    FROM Wagon_Freight wf
+    JOIN Wagon w ON wf.WagonWagonNumber = w.WagonNumber
+    JOIN WagonModel wm ON w.ModelID = wm.ModelNumber
+    WHERE wf.FreightID IN (SELECT FreightID FROM Train_Freight WHERE TrainID = v_train_id);
+
+    -- get the length of the new wagon being added
+    SELECT wm.Length INTO v_new_wagon_length
+    FROM Wagon w
+    JOIN WagonModel wm ON w.ModelID = wm.ModelNumber
+    WHERE w.WagonNumber = :NEW.WagonWagonNumber;
+
+-- checking
+    IF (v_current_total_length + v_new_wagon_length) > v_max_allowed_length THEN
+        RAISE_APPLICATION_ERROR(-20010, 
+            'LIMIT EXCEEDED: Train MaxLength is ' || v_max_allowed_length || 
+            'm. Current total with this wagon would be ' || (v_current_total_length + v_new_wagon_length) || 'm.');
+    END IF;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        NULL;
+END;
+/
+
+----TESTS-----------
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    -- adding test data IDs
+    v_train_id   NUMBER := 7777; 
+    v_freight_id NUMBER := 9999;
+    v_fac_start  NUMBER := 50; 
+    v_fac_end    NUMBER := 12; 
+    v_model_id   NUMBER := 8888;
+    
+    -- test wagon numbers
+    v_w1 VARCHAR2(50) := 'WAG-TEST-01';
+    v_w2 VARCHAR2(50) := 'WAG-TEST-02';
+    v_w3 VARCHAR2(50) := 'WAG-TEST-03';
+
+    PROCEDURE Report(p_test_name VARCHAR2, p_status VARCHAR2) IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('Test: ' || p_test_name || '; [' || p_status || ']');
+    END;
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('======  USBD33  ======');
+
+    -- CLEANUP
+    DELETE FROM Wagon_Freight WHERE FreightID = v_freight_id;
+    DELETE FROM Train_Freight WHERE FreightID = v_freight_id;
+    DELETE FROM Wagon WHERE WagonNumber IN (v_w1, v_w2, v_w3);
+    DELETE FROM WagonModel WHERE ModelNumber = v_model_id;
+    DELETE FROM Freight WHERE ID = v_freight_id;
+    DELETE FROM Train WHERE ID = v_train_id;
+    COMMIT;
+
+    -- INSERTING DATA SETUP 
+    BEGIN INSERT INTO Operator (ShortName, Name, VATnumber) VALUES ('Medway', 'Medway S.A.', 'PT509017800'); EXCEPTION WHEN OTHERS THEN NULL; END;
+    BEGIN INSERT INTO Owner (ShortName, Name, VATnumber) VALUES ('IP', 'Infraestruturas de Portugal', 'PT503933813'); EXCEPTION WHEN OTHERS THEN NULL; END;
+    BEGIN INSERT INTO FacilityType (FacilityTypeID, Name) VALUES (5, 'Station'); EXCEPTION WHEN OTHERS THEN NULL; END;
+    BEGIN INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName) 
+          VALUES (v_fac_start, 'StartStation', 5, 'Addr1', 'City1', 100, 'Yes', 'IP'); EXCEPTION WHEN OTHERS THEN NULL; END;
+    BEGIN INSERT INTO Facility (ID, Name, TypeID, Address, City, Capacity, Electrified, OwnerShortName) 
+          VALUES (v_fac_end, 'EndStation', 5, 'Addr2', 'City2', 100, 'Yes', 'IP'); EXCEPTION WHEN OTHERS THEN NULL; END;
+
+    -- setup train (limit 25 meters)
+    INSERT INTO Train (ID, MaxLength) VALUES (v_train_id, 25);
+    INSERT INTO Freight (ID, Freight, StartID, EndID, LoadTime) VALUES (v_freight_id, 1, v_fac_start, v_fac_end, SYSDATE);
+    INSERT INTO Train_Freight (TrainID, FreightID) VALUES (v_train_id, v_freight_id);
+
+    -- setup Wagon Model (10 meters each)
+    BEGIN INSERT INTO WagonType (ID, Name) VALUES (1, 'TestType'); EXCEPTION WHEN OTHERS THEN NULL; END;
+    INSERT INTO WagonModel (ModelNumber, Model, Maker, NumberBogies, Bogies, Length, Width, Height, Weight, MaxSpeed, Payload, Volume, TypeID)
+    VALUES (v_model_id, 'Model10m', 'Maker', 2, 'Double', 10, 3, 3, 20, 100, 50, 70, 1);
+
+    INSERT INTO Wagon (WagonNumber, ModelID, ServiceYear, OperatorShortName) VALUES (v_w1, v_model_id, 2024, 'Medway');
+    INSERT INTO Wagon (WagonNumber, ModelID, ServiceYear, OperatorShortName) VALUES (v_w2, v_model_id, 2024, 'Medway');
+    INSERT INTO Wagon (WagonNumber, ModelID, ServiceYear, OperatorShortName) VALUES (v_w3, v_model_id, 2024, 'Medway');
+    COMMIT;
+
+    -- TESTS
+
+    -- TEST 1: adding first wagon (total 10m / limit 25m)
+    BEGIN
+        INSERT INTO Wagon_Freight (WagonWagonNumber, FreightID, Weight) VALUES (v_w1, v_freight_id, 10);
+        Report('1. Add first 10m wagon', 'PASS');
+    EXCEPTION WHEN OTHERS THEN Report('1. Add first 10m wagon', 'FAIL: ' || SQLERRM);
+    END;
+
+    -- TEST 2: adding second wagon (total 20m / limit 25m)
+    BEGIN
+        INSERT INTO Wagon_Freight (WagonWagonNumber, FreightID, Weight) VALUES (v_w2, v_freight_id, 10);
+        Report('2. Add second 10m wagon', 'PASS');
+    EXCEPTION WHEN OTHERS THEN Report('2. Add second 10m wagon', 'FAIL: ' || SQLERRM);
+    END;
+
+    -- TEST 3: adding third wagon (total 30m / limit 25m) - SHOULD BE BLOCKED
+    BEGIN
+        INSERT INTO Wagon_Freight (WagonWagonNumber, FreightID, Weight) VALUES (v_w3, v_freight_id, 10);
+        Report('3. Add third 10m wagon (Exceed limit)', 'FAIL - Was not blocked');
+    EXCEPTION WHEN OTHERS THEN
+        IF SQLCODE = -20010 THEN
+            Report('3. Add third 10m wagon (Exceed limit)', 'PASS - correctly blocked');
+        ELSE
+            Report('3. Add third 10m wagon (Exceed limit)', 'FAIL - Other error: ' || SQLERRM);
+        END IF;
+    END;
+
+    -- cleanup
+    ROLLBACK; 
+    DBMS_OUTPUT.PUT_LINE('====== TESTS FINISHED ======');
+END;
+/
